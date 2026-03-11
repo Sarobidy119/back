@@ -17,11 +17,13 @@ const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173")
   .split(",")
   .map((o) => o.trim())
   .filter(Boolean);
+const allowAll = allowedOrigins.includes("*");
 
 app.use(cors({
   origin: function (origin, callback) {
     // Allow non-browser requests (like curl, Postman)
     if (!origin) return callback(null, true);
+    if (allowAll) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error("Not allowed by CORS"));
   },

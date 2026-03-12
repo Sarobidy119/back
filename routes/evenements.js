@@ -12,7 +12,7 @@ const db      = require("../config/db");
 router.get("/", (req, res) => {
   db.query(
     `SELECT * FROM evenements_radio
-     WHERE statut = 'publie' AND date >= CURRENT_DATE
+     WHERE statut = 'publie' AND date >= CURDATE()
      ORDER BY date ASC, heure_debut ASC`,
     (err, rows) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -40,7 +40,7 @@ router.post("/", (req, res) => {
 
   db.query(
     `INSERT INTO evenements_radio (titre, description, date, heure_debut, heure_fin, animateur, categorie, statut)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [titre, description || "", date, heure_debut, heure_fin || null, animateur || "", categorie || "evenement", statut || "publie"],
     (err, result) => {
       if (err) return res.status(500).json({ error: err.message });

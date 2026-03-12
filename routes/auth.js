@@ -37,11 +37,11 @@ router.post("/register", async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       db.query(
-        "INSERT INTO users (name, email, password) VALUES (?, ?, ?) RETURNING id",
+        "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
         [name, email, hashedPassword],
         (err, result) => {
           if (err) {
-            if (err.code === "23505") {
+            if (err.code === "ER_DUP_ENTRY") {
               return res.status(409).json({ error: "Cet email est déjà utilisé." });
             }
             return res.status(500).json({ error: err.message });
@@ -170,7 +170,7 @@ router.post("/forgot-password", (req, res) => {
 
     // Sauvegarde du token en base de données
     db.query(
-    "INSERT INTO password_resets (user_id, token, expires_at) VALUES (?, ?, ?) ON CONFLICT (user_id) DO UPDATE SET token = EXCLUDED.token, expires_at = EXCLUDED.expires_at",
+      "INSERT INTO password_resets (user_id, token, expires_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE token = VALUES(token), expires_at = VALUES(expires_at)",
       [user.id, token, expiresAt],
       (err) => {
         if (err) return res.status(500).json({ error: err.message });

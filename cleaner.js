@@ -12,7 +12,8 @@ function supprimerEvenementsPassés() {
   // On garde une marge de 1h après l'heure de fin pour laisser le temps de finir
   const sql = `
     DELETE FROM programmes_scolaires
-    WHERE CONCAT(date, ' ', COALESCE(heure_fin, heure)) < DATE_SUB(NOW(), INTERVAL 1 HOUR)
+    WHERE to_timestamp(date || ' ' || COALESCE(heure_fin, heure), 'YYYY-MM-DD HH24:MI')
+          < (NOW() - INTERVAL '1 hour')
   `;
 
   db.query(sql, (err, result) => {
@@ -20,8 +21,8 @@ function supprimerEvenementsPassés() {
       console.error("❌ Cleaner — Erreur suppression:", err.message);
       return;
     }
-    if (result.affectedRows > 0) {
-      console.log(`🧹 Cleaner — ${result.affectedRows} événement(s) passé(s) supprimé(s) à ${new Date().toLocaleString("fr-FR")}`);
+    if (result.rowCount > 0) {
+      console.log(`🧹 Cleaner — ${result.rowCount} événement(s) passé(s) supprimé(s) à ${new Date().toLocaleString("fr-FR")}`);
     }
   });
 }

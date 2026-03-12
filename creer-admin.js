@@ -28,7 +28,7 @@ async function creerAdmin() {
 
   // Insertion dans la table admins
   db.query(
-    "INSERT INTO admins (email, password) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password)",
+    "INSERT INTO admins (email, password) VALUES (?, ?) ON CONFLICT (email) DO UPDATE SET password = EXCLUDED.password",
     [ADMIN_EMAIL, hashedPassword],
     (err) => {
       if (err) {

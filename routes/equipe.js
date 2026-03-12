@@ -25,7 +25,7 @@ router.post("/", (req, res) => {
   if (!nom || !role) return res.status(400).json({ error: "nom et role requis" });
   db.query(
     `INSERT INTO equipe (nom, role, categorie, bio, bio_longue, photo, email, linkedin, twitter, emission, horaire, anciennete, specialite, ordre)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`,
     [nom, role, categorie || "Animation", bio || "", bio_longue || "", photo || "", email || "", linkedin || "", twitter || "", emission || "", horaire || "", anciennete || "", specialite || "", ordre || 0],
     (err, result) => {
       if (err) { console.error("POST /equipe:", err); return res.status(500).json({ error: "Erreur serveur" }); }

@@ -96,7 +96,7 @@ router.post("/", async (req, res) => {
   if (!type || !titre || !date || !heure)
     return res.status(400).json({ error: "Champs obligatoires manquants." });
   db.query(
-    "INSERT INTO programmes_scolaires (type,titre,date,heure,mention,niveau,parcours,heure_fin,salle,professeur,session,lieu) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO programmes_scolaires (type,titre,date,heure,mention,niveau,parcours,heure_fin,salle,professeur,session,lieu) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id",
     [type, titre, date, heure, mention||null, niveau||null, parcours||null, heure_fin||null, salle||null, professeur||null, session||null, lieu||null],
     (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
